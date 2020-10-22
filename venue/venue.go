@@ -40,6 +40,7 @@ func (o *venue) when(e interface{}) {
 	switch reflect.TypeOf(e).String() {
 	case "*venue.VenueCreated":
 		o.id = e.(*VenueCreated).ID
+		o.name = e.(*VenueCreated).Name
 	default:
 		fmt.Printf("Default: %v, %s", e, reflect.TypeOf(e).String())
 	}
