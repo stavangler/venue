@@ -5,7 +5,7 @@ import "errors"
 type Service interface {
 	Create(id string) error
 	SetName(id, name string) error
-	Query(qm *QueryModel) map[string]*venue
+	Query(qm *QueryModel) []*venue
 }
 
 type QueryModel struct {
@@ -35,6 +35,7 @@ type NameSet struct {
 }
 
 var (
-	ErrMissingID   = errors.New("ID not specified")
-	ErrMissingName = errors.New("Name not specified")
+	ErrMissingID     = errors.New("ID not specified")
+	ErrAlreadyExists = errors.New("ID already exists")
+	ErrMissingName   = errors.New("Name not specified")
 )

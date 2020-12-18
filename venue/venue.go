@@ -13,8 +13,8 @@ var (
 type venue struct {
 	changes []interface{}
 	version int
-	id      string
-	name    string
+	ID      string `json:"id"`
+	Name    string `json:"name,omitempty"`
 	state   string
 }
 
@@ -56,10 +56,10 @@ func (s *venue) apply(e interface{}) error {
 func (s *venue) when(e interface{}) {
 	switch reflect.TypeOf(e).String() {
 	case "*venue.Created":
-		s.id = e.(*Created).ID
+		s.ID = e.(*Created).ID
 		s.state = unpublised
 	case "*venue.NameSet":
-		s.name = e.(*NameSet).Name
+		s.Name = e.(*NameSet).Name
 	case "*venue.Published":
 		s.state = published
 	default:
@@ -68,12 +68,12 @@ func (s *venue) when(e interface{}) {
 }
 
 func (s *venue) ensureValidState() error {
-	if len(s.id) <= 0 {
+	if len(s.ID) <= 0 {
 		return ErrMissingID
 	}
 
 	if published == s.state {
-		if len(s.name) <= 0 {
+		if len(s.Name) <= 0 {
 			return ErrMissingName
 		}
 	}

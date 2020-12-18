@@ -9,11 +9,13 @@ type store struct {
 }
 
 func NewStore() *store {
-	return &store{}
+	return &store{
+		venues: make(map[string]*venue, 0),
+	}
 }
 
 func (s *store) Save(venue *venue) {
-	s.venues[strings.ToLower(venue.id)] = venue
+	s.venues[strings.ToLower(venue.ID)] = venue
 }
 
 func (s *store) Find(id string) *venue {
@@ -32,8 +34,8 @@ func (s *store) Query(query *QueryModel) map[string]*venue {
 
 	if len(query.Name) > 0 {
 		for _, v := range s.venues {
-			if strings.EqualFold(v.name, query.Name) {
-				result[strings.ToLower(v.id)] = v
+			if strings.EqualFold(v.Name, query.Name) {
+				result[strings.ToLower(v.ID)] = v
 				break
 			}
 		}

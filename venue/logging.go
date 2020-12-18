@@ -40,7 +40,7 @@ func (ls *loggingService) SetName(id, name string) (err error) {
 	return ls.s.SetName(id, name)
 }
 
-func (ls *loggingService) Query(qm *QueryModel) map[string]*venue{
+func (ls *loggingService) Query(qm *QueryModel) []*venue {
 	defer func(begin time.Time) {
 		ls.Log(
 			"method", "query",
