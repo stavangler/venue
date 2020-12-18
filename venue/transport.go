@@ -23,6 +23,8 @@ func MakeHTTPHandler(s Service, logger log.Logger) http.Handler {
 	}
 
 	r.Methods("PUT").Path("/create").Handler(createVenueHandler(e, options))
+	r.Methods("PUT").Path("/name").Handler(createSetNameHandler(e, options))
+	r.Methods("GET").Path("/query").Handler(createQueryHandler(e, options))
 
 	return r
 }
@@ -34,6 +36,41 @@ func createVenueHandler(e Endpoints, options []httptransport.ServerOption) *http
 		encodeResponse,
 		options...,
 	)
+}
+
+func createSetNameHandler(e Endpoints, options []httptransport.ServerOption) *httptransport.Server {
+	return httptransport.NewServer(
+		e.SetName,
+		decodeSetName,
+		encodeResponse,
+		options...,
+	)
+}
+
+func createQueryHandler(e Endpoints, options []httptransport.ServerOption) *httptransport.Server {
+	return httptransport.NewServer(
+		e.Query,
+		decodeQuery,
+		encodeResponse,
+		options...,
+	)
+}
+
+func decodeQuery(_ context.Context, r *http.Request) (request interface{}, err error) {
+	query := r.URL.Query()
+	qm := &QueryModel{}
+	qm.Id = query.Get("id")
+	qm.Name = query.Get("name")
+
+	return qm, err
+}
+
+func decodeSetName(_ context.Context, r *http.Request) (request interface{}, err error) {
+	var command SetName
+
+	err = json.NewDecoder(r.Body).Decode(&command)
+
+	return command, err
 }
 
 func decodeCreateVenue(_ context.Context, r *http.Request) (request interface{}, err error) {

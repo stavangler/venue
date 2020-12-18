@@ -38,7 +38,7 @@ func main() {
 
 	var svc venue.Service
 	{
-		svc = venue.NewService()
+		svc = venue.NewService(venue.NewStore())
 		svc = venue.NewLoggingService(log.With(logger, "component", "venue"), svc)
 	}
 
