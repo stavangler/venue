@@ -4,9 +4,11 @@ import "time"
 
 type Service interface {
 	Create(id string) error
-	SetBusinessUnit(id, name string) error
+	SetTitle(id, title string) error
+	SetDescription(id, description string) error
 	AddEntry(id, entryID string) error
 	SetEntryTitle(id, entryID, title string) error
+	SetEntryBusinessUnit(id, entryID, name string) error
 	SetEntryVenue(id, entryID, venueID string) error
 	SetEntryTransport(id, entryID, transportID string) error
 	SetEntryDescription(id, entryID, description string) error
@@ -25,3 +27,9 @@ const (
 	unpublished string = "unpublished"
 	published   string = "published"
 )
+
+type store interface {
+	Save(agenda *agenda)
+	Find(id string) *agenda
+	Query(query *QueryModel) map[string]*agenda
+}

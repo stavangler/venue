@@ -2,20 +2,16 @@ package agenda
 
 import (
 	"errors"
-	"time"
 )
 
 type agenda struct {
-	ID           string    `json:"id"`
-	Title        string    `json:"title"`
-	Description  string    `json:"description,omitempty"`
-	BusinessUnit string    `json:"businessunit,omitempty"`
-	VenueID      string    `json:"venue_id,omitempty"`
-	TransportID  string    `json:"transport_id,omitempty"`
-	EntryTime    time.Time `json:"entry_time,omitempty"`
-	changes      []interface{}
-	version      int
-	state        string
+	ID          string  `json:"id"`
+	Title       string  `json:"title"`
+	Description string  `json:"description,omitempty"`
+	Entries     []entry `json:"entries,omitempty"`
+	changes     []interface{}
+	version     int
+	state       string
 }
 
 func NewAgenda(id string) (*agenda, error) {
@@ -24,6 +20,31 @@ func NewAgenda(id string) (*agenda, error) {
 		return nil, err
 	}
 	return o, nil
+}
+
+func (s *agenda) SetTitle(title string) error {
+	return s.apply(&titleSet{s.ID, title})
+}
+
+func (s *agenda) SetDescription(description string) error {
+	return s.apply(&descriptionSet{s.ID, description})
+}
+
+func (s *agenda) AddEntry(e *entry) error {
+	return s.apply(&entryAdded{s.ID, e})
+}
+
+func (s *agenda) GetEntry(entryID string) (entry, error) {
+	for _, e := range s.Entries {
+		if e.ID == entryID {
+			return e, nil
+		}
+	}
+	return entry{}, errors.New("Not found")
+}
+
+func (s *agenda) UpdateEntry(e *entry) error {
+	return s.apply(&entryUpdated{e.ID, e})
 }
 
 func (s *agenda) apply(e interface{}) error {
@@ -44,7 +65,29 @@ func (s *agenda) when(e interface{}) {
 		s.state = published
 	case *titleSet:
 		s.Title = v.Title
+	case *descriptionSet:
+		s.Description = v.Description
+	case *entryAdded:
+		found := false
+		for _, entry := range s.Entries {
+			if entry.ID == v.ID {
+				found = true
+			}
+		}
+		if found == false {
+			s.Entries = append(s.Entries, *v.Entry)
+		}
+	case *entryUpdated:
+		for i, entry := range s.Entries {
+			if entry.ID == v.ID {
+				s.Entries[i] = *v.Entry
+				continue
+			}
+		}
+	default:
+		return
 	}
+	s.version++
 }
 
 func (s *agenda) valid() error {
@@ -55,8 +98,10 @@ func (s *agenda) valid() error {
 		if len(s.Title) <= 0 {
 			return errors.New("Title missing")
 		}
-		if s.EntryTime.IsZero() {
-			return errors.New("Entry time not set")
+		for _, e := range s.Entries {
+			if e.state != published {
+				return errors.New("not all events in agenda are published")
+			}
 		}
 	}
 	return nil

@@ -4,25 +4,25 @@ import (
 	"strings"
 )
 
-type store struct {
+type memstore struct {
 	agendas map[string]*agenda
 }
 
-func NewStore() *store {
-	return &store{
+func NewStore() *memstore {
+	return &memstore{
 		agendas: make(map[string]*agenda, 0),
 	}
 }
 
-func (s *store) Save(agenda *agenda) {
+func (s *memstore) Save(agenda *agenda) {
 	s.agendas[strings.ToLower(agenda.ID)] = agenda
 }
 
-func (s *store) Find(id string) *agenda {
+func (s *memstore) Find(id string) *agenda {
 	return s.agendas[strings.ToLower(id)]
 }
 
-func (s *store) Query(query *QueryModel) map[string]*agenda {
+func (s *memstore) Query(query *QueryModel) map[string]*agenda {
 	result := make(map[string]*agenda, 0)
 
 	if len(query.ID) > 0 {

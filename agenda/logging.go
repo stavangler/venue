@@ -27,7 +27,31 @@ func (ls *loggingService) Create(id string) (err error) {
 	return ls.s.Create(id)
 }
 
-func (ls *loggingService) SetBusinessUnit(id, name string) (err error) {
+func (ls *loggingService) SetTitle(id, title string) (err error) {
+	defer func(begin time.Time) {
+		ls.Log(
+			"method", "set_agenda_title",
+			"took", time.Since(begin),
+			"id", id,
+			"err", err,
+		)
+	}(time.Now())
+	return ls.s.SetTitle(id, title)
+}
+
+func (ls *loggingService) SetDescription(id, description string) (err error) {
+	defer func(begin time.Time) {
+		ls.Log(
+			"method", "set_agenda_description",
+			"took", time.Since(begin),
+			"id", id,
+			"err", err,
+		)
+	}(time.Now())
+	return ls.s.SetDescription(id, description)
+}
+
+func (ls *loggingService) SetEntryBusinessUnit(id, entryID, name string) (err error) {
 	defer func(begin time.Time) {
 		ls.Log(
 			"method", "set_business_unit",
@@ -37,7 +61,7 @@ func (ls *loggingService) SetBusinessUnit(id, name string) (err error) {
 			"err", err,
 		)
 	}(time.Now())
-	return ls.s.SetBusinessUnit(id, name)
+	return ls.s.SetEntryBusinessUnit(id, entryID, name)
 }
 
 func (ls *loggingService) AddEntry(id, entryID string) (err error) {
