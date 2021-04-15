@@ -25,6 +25,9 @@ type entryUpdated struct {
 	Entry *entry
 }
 
+type entryPublished struct {
+}
+
 type entryBusinessUnitSet struct {
 	ID           string
 	BusinessUnit string

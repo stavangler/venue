@@ -46,6 +46,10 @@ func (s *entry) SetVenue(venueID string) error {
 	return s.apply(&entryVenueSet{s.ID, venueID})
 }
 
+func (s *entry) Publish() error {
+	return s.apply(&entryPublished{})
+}
+
 func (s *entry) apply(e interface{}) error {
 	s.when(e)
 	if err := s.valid(); err != nil {
@@ -70,6 +74,8 @@ func (s *entry) when(e interface{}) {
 		s.Description = v.Description
 	case *entryVenueSet:
 		s.VenueID = v.venueID
+	case *entryPublished:
+		s.state = published
 	default:
 		return
 	}

@@ -37,6 +37,14 @@ func TestService(t *testing.T) {
 	if err := svc.SetEntryVenue("12354", "111", "mcdonalds"); err != nil {
 		t.Error(err)
 	}
+	if err := svc.SetEntryPublish("12354", "111"); err != nil {
+		t.Error(err)
+	}
+	if err := svc.Publish("12354"); err != nil {
+		t.Error(err)
+	}
 	res := svc.Query(&QueryModel{ID: "12354"})
-	t.Log(res)
+	for _, r := range res {
+		t.Log(r)
+	}
 }

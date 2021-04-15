@@ -34,6 +34,10 @@ func (s *agenda) AddEntry(e *entry) error {
 	return s.apply(&entryAdded{s.ID, e})
 }
 
+func (s *agenda) Publish() error {
+	return s.apply(&agendaPublished{})
+}
+
 func (s *agenda) GetEntry(entryID string) (entry, error) {
 	for _, e := range s.Entries {
 		if e.ID == entryID {

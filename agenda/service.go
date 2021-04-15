@@ -26,6 +26,19 @@ func (s *agendaService) Create(id string) error {
 	return nil
 }
 
+func (s *agendaService) Publish(id string) error {
+	a := s.store.Find(id)
+	if a == nil {
+		return errors.New("Unknown agenda id")
+	}
+	err := a.Publish()
+	if err != nil {
+		return err
+	}
+	s.store.Save(a)
+	return nil
+}
+
 func (s *agendaService) SetTitle(id, title string) error {
 	a := s.store.Find(id)
 	if a == nil {
@@ -144,6 +157,22 @@ func (s *agendaService) SetEntryTime(id, entryID string, entryTime time.Time) er
 	s.store.Save(a)
 	return nil
 }
+
+func (s *agendaService) SetEntryPublish(id, entryID string) error {
+	a := s.store.Find(id)
+	if a == nil {
+		return errors.New("Unknown agenda id")
+	}
+	e, err := a.GetEntry(entryID)
+	if err != nil {
+		return err
+	}
+	e.Publish()
+	a.UpdateEntry(&e)
+	s.store.Save(a)
+	return nil
+}
+
 func (s *agendaService) Query(qm *QueryModel) []*agenda {
 	q := s.store.Query(qm)
 	qres := make([]*agenda, 0, len(q))

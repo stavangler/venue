@@ -83,6 +83,9 @@ func (ls *loggingService) SetEntryTime(id, entryID string, entryTime time.Time) 
 	return ls.s.SetEntryTime(id, entryID, entryTime)
 }
 
+func (ls *loggingService) SetEntryPublish(id, entryID string) error {
+	return ls.s.SetEntryPublish(id, entryID)
+}
 func (ls *loggingService) Query(qm *QueryModel) []*agenda {
 	defer func(begin time.Time) {
 		ls.Log(
@@ -93,4 +96,7 @@ func (ls *loggingService) Query(qm *QueryModel) []*agenda {
 		)
 	}(time.Now())
 	return ls.s.Query(qm)
+}
+func (ls *loggingService) Publish(id string) error {
+	return ls.s.Publish(id)
 }

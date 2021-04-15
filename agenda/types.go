@@ -13,7 +13,9 @@ type Service interface {
 	SetEntryTransport(id, entryID, transportID string) error
 	SetEntryDescription(id, entryID, description string) error
 	SetEntryTime(id, entryID string, entryTime time.Time) error
+	SetEntryPublish(id, entryID string) error
 	Query(qm *QueryModel) []*agenda
+	Publish(id string) error
 }
 
 type QueryModel struct {
